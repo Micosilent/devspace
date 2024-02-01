@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import {Entity, PrimaryGeneratedColumn, Column, ManyToMany, OneToMany, JoinTable} from "typeorm"
+import {Post} from "./Post";
+import {Comment} from "./Comment";
 
 @Entity()
 export class User {
@@ -13,6 +15,18 @@ export class User {
     lastName: string
 
     @Column()
-    age: number
+    email: string
 
+    @Column()
+    password: string
+
+    @ManyToMany(type => User)
+    @JoinTable()
+    followed: User[]
+
+    @OneToMany(type => Post, post=> post.createdBy)
+    posts: Post[]
+
+    @OneToMany(type => Comment, comment=> comment.createdBy)
+    comments: Comment[]
 }
