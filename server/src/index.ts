@@ -4,6 +4,7 @@ import { Request, Response } from "express"
 import { AppDataSource } from "./data-source"
 import { Routes } from "./routes"
 import { User } from "./entity/User"
+import {errorHandler} from "./controller/errorController";
 
 AppDataSource.initialize().then(async () => {
 
@@ -25,8 +26,7 @@ AppDataSource.initialize().then(async () => {
     })
 
     // setup express app here
-    // ...
-
+    app.use(errorHandler)
     // start express server
     app.listen(3000)
 
