@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  client:
+    container_name: node_app_client
+    restart: unless-stopped
+    build: ./client
+    ports:
+      - "8080:3000"
+  server:
+    container_name: node_app_server
+    restart: unless-stopped
+    build: ./server
+    ports:
+      - "3000:3000"
+    environment:
+      MYSQL_DATABASE: node_app
+      MYSQL_USER: node_app
+      MYSQL_PASSWORD: TestPasswordPleaseChange
+    depends_on:
+      - db
+  db:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_DATABASE: node_app
+      MYSQL_USER: node_app
+      MYSQL_PASSWORD: TestPasswordPleaseChange
