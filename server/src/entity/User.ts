@@ -33,7 +33,6 @@ export class User {
 
 
     static async hashPassword(password: string){
-        console.log(`Hashing password ${password}, with salt rounds ${process.env.SALT_ROUNDS}`)
         return await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS))
     }
 
