@@ -1,4 +1,5 @@
 import {Entity, PrimaryGeneratedColumn, Column, ManyToMany, OneToMany, JoinTable} from "typeorm"
+import * as bcrypt from "bcrypt"
 import {Post} from "./Post";
 import {Comment} from "./Comment";
 
@@ -29,4 +30,14 @@ export class User {
 
     @OneToMany(type => Comment, comment=> comment.createdBy)
     comments: Comment[]
+
+
+    static async hashPassword(password: string){
+        console.log(`Hashing password ${password}, with salt rounds ${process.env.SALT_ROUNDS}`)
+        return await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS))
+    }
+
+    async comparePassword(password: string){
+        return await bcrypt.compare(password, this.password)
+    }
 }
