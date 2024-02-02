@@ -4,6 +4,8 @@ services:
     container_name: node_app_client
     restart: unless-stopped
     build: ./client
+    environment:
+      NODE_ENV: development
     ports:
       - "8080:3000"
   server:
@@ -13,6 +15,9 @@ services:
     ports:
       - "3000:3000"
     environment:
+      NODE_ENV: development
+      JWT_SECRET: 'a very secret key, change this please'
+      SALT_ROUNDS: 12
       MYSQL_DATABASE: node_app
       MYSQL_USER: node_app
       MYSQL_PASSWORD: TestPasswordPleaseChange

@@ -1,9 +1,11 @@
 import {NextFunction, Request, Response} from "express";
-import {AppError} from "../../util/AppError";
+import {AppError} from "../util/AppError";
 
 function sendDevError(res: Response, err: AppError){
 
     // During development, we want full error information
+    if(!err.statusCode) err.statusCode = 500;
+    console.log(err)
     return res.status(err.statusCode).json({
         status: err.status,
         message: err.message,
