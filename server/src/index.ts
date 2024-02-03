@@ -3,6 +3,8 @@ import * as bodyParser from "body-parser"
 import { AppDataSource } from "./data-source"
 import {errorHandler} from "./controller/errorController";
 import {AuthRoutes} from "./routes/authRoutes";
+import {UserRoutes} from "./routes/userRoutes";
+import {AuthController} from "./controller/authController";
 
 AppDataSource.initialize().then(async () => {
 
@@ -13,6 +15,11 @@ AppDataSource.initialize().then(async () => {
     // register express routes from defined application routes
     // Auth Routes
     app.use('/auth', AuthRoutes)
+    // All routes after this one require authentication
+    const authController = new AuthController();
+    app.use(authController.protect)
+
+    app.use('/users', UserRoutes)
 
     // setup express app here
     app.use(errorHandler)

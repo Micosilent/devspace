@@ -106,7 +106,10 @@ export class AuthController {
         // Verify the token
         const decoded = jwt.verify(token, this.jwt_secret) as JwtPayload
         // Check if the user still exists
-        const candidateUser = await this.userRepository.findOne({where: {id: decoded.id}})
+        const candidateUser = await this.userRepository.findOne({
+            where: {id: decoded.id},
+            relations: {followed: true, followers: true, notifications: true}
+        })
         if(!candidateUser){
             return next(new AppError('The user belonging to this token no longer exists', 401))
         }

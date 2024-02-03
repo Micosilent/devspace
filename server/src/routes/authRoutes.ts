@@ -7,6 +7,7 @@ export const AuthRoutes = Router();
 
 AuthRoutes.route("/signup").post(authController.handleSignUp)
 AuthRoutes.route("/login").post(authController.handleLogin)
+AuthRoutes.route("/logout").get(authController.handleLogout)
 
 
 

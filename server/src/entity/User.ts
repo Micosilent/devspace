@@ -2,6 +2,7 @@ import {Entity, PrimaryGeneratedColumn, Column, ManyToMany, OneToMany, JoinTable
 import * as bcrypt from "bcrypt"
 import {Post} from "./Post";
 import {Comment} from "./Comment";
+import {Notification} from "./Notification";
 
 @Entity()
 export class User {
@@ -25,11 +26,18 @@ export class User {
     @JoinTable()
     followed: User[]
 
+    @ManyToMany(type => User)
+    @JoinTable()
+    followers: User[]
+
     @OneToMany(type => Post, post=> post.createdBy)
     posts: Post[]
 
     @OneToMany(type => Comment, comment=> comment.createdBy)
     comments: Comment[]
+
+    @OneToMany(type => Notification, notification => notification.belongsTo)
+    notifications: Notification[]
 
 
     static async hashPassword(password: string){
@@ -38,5 +46,10 @@ export class User {
 
     async comparePassword(password: string){
         return await bcrypt.compare(password, this.password)
+    }
+
+    public deleteSensitiveFields(){
+        delete this.password
+        delete this.email
     }
 }
