@@ -6,6 +6,7 @@ import {AuthRoutes} from "./routes/authRoutes";
 import {UserRoutes} from "./routes/userRoutes";
 import {AuthController} from "./controller/authController";
 import {PostRoutes} from "./routes/postRoutes";
+import {swaggerRouter} from "./routes/swaggerRoutes";
 
 AppDataSource.initialize().then(async () => {
 
@@ -16,6 +17,10 @@ AppDataSource.initialize().then(async () => {
     // register express routes from defined application routes
     // Auth Routes
     app.use('/auth', AuthRoutes)
+
+    // Swagger Routes
+    app.use('/docs', swaggerRouter);
+
     // All routes after this one require authentication
     const authController = new AuthController();
     app.use(authController.protect)

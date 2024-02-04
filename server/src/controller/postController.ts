@@ -16,20 +16,72 @@ export class PostController {
 
     private userRepository = AppDataSource.getRepository(User)
 
-    public getAllPosts = catchAsync(async (_req, res, _next) => {
-        const posts = await this.postRepository.find({relations: {createdBy: true}})
+  /**
+   * @swagger
+   * /posts:
+   *  get:
+   *     security:
+   *       - bearerAuth: []
+   *     tags:
+   *       - Posts
+   *     operationId: getAllPosts
+   *     summary: Get all posts
+   *     responses:
+   *      200:
+   *        description: A list of all posts
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: array
+   *              items:
+   *                $ref: '#/components/schemas/Post'
+   */
+  public getAllPosts = catchAsync(async (_req, res, _next) => {
+    const posts = await this.postRepository.find({
+      relations: { createdBy: true },
+    });
 
         // Remove sensitive fields
         posts.forEach(post => {
             post.deleteSensitiveFields()
         })
 
-        res.status(200).send(posts)
-    })
-
-    public getPost = catchAsync(async (req, res, next) => {
-       const { post, errorMessage} =
-           await this.validateRequestAndGetEntities(req)
+    res.status(200).send(posts);
+  });
+  
+    /**
+     * @swagger
+     * /posts/{id}:
+     *  get:
+     *     security:
+     *       - bearerAuth: []
+     *     tags:
+     *       - Posts
+     *     operationId: getPost
+     *     summary: Get a post by ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         description: ID of the post
+     *         schema:
+     *           type: integer
+     *     responses:
+     *      200:
+     *        description: A post
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Post'
+     *      400:
+     *        description: Invalid ID
+     *      404:
+     *        description: No post found with that ID
+     */
+  public getPost = catchAsync(async (req, res, next) => {
+    const { post, errorMessage } = await this.validateRequestAndGetEntities(
+      req
+    );
 
         if(errorMessage == 'Invalid ID') return next(new AppError('Invalid ID', 400))
         if(errorMessage == 'No post found with that ID'){
@@ -39,8 +91,29 @@ export class PostController {
         // Remove sensitive fields
         post.deleteSensitiveFields()
 
-        res.send(post)
-    })
+    res.send(post);
+  });
+  
+    /**
+     * @swagger
+     * /posts/followed:
+     *  get:
+     *     security:
+     *       - bearerAuth: []
+     *     tags:
+     *       - Posts
+     *     operationId: getFollowedPosts
+     *     summary: Get posts of followed users
+     *     responses:
+     *      200:
+     *        description: A list of posts
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: array
+     *              items:
+     *                $ref: '#/components/schemas/Post'
+     */
 
     public getFollowedPosts = catchAsync(async (req : AppRequest, res, _next) => {
         const user = await this.userRepository.findOne({
@@ -54,8 +127,42 @@ export class PostController {
             post.deleteSensitiveFields()
         })
 
-        res.send(followedPosts)
-    })
+    res.send(followedPosts);
+  });
+  
+    /**
+     * @swagger
+     * /posts:
+     *  post:
+     *     security:
+     *       - bearerAuth: []
+     *     tags:
+     *       - Posts
+     *     operationId: createPost
+     *     summary: Create a post
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               title:
+     *                 type: string
+     *                 description: Post title
+     *               content:
+     *                 type: string
+     *                 description: Post content
+     *     responses:
+     *      201:
+     *        description: A post
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Post'
+     *      400:
+     *        description: Title and content are required
+     */
 
     public createPost = catchAsync(async (req : AppRequest, res, next) => {
         const user = await this.userRepository.findOne({where: {id: req.user.id}})
@@ -75,8 +182,51 @@ export class PostController {
         // Remove sensitive fields
         post.deleteSensitiveFields()
 
-        res.status(201).send(post)
-    })
+    res.status(201).send(post);
+  });
+  
+    /**
+     * @swagger
+     * /posts/{id}:
+     *  patch:
+     *     security:
+     *       - bearerAuth: []
+     *     tags:
+     *       - Posts
+     *     operationId: updatePost
+     *     summary: Update a post by ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         description: ID of the post
+     *         schema:
+     *           type: integer
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               title:
+     *                 type: string
+     *                 description: Post title
+     *               content:
+     *                 type: string
+     *                 description: Post content
+     *     responses:
+     *      200:
+     *        description: A post
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Post'
+     *      400:
+     *        description: Invalid ID or Title and content are required
+     *      404:
+     *        description: No post found with that ID
+     */
 
     public updatePost = catchAsync(async (req : AppRequest, res, next) => {
         const {user, post, errorMessage} = await this.validateRequestAndGetEntities(req)
@@ -100,8 +250,34 @@ export class PostController {
         // Remove sensitive fields
         post.deleteSensitiveFields()
 
-        res.status(200).send(post)
-    })
+    res.status(200).send(post);
+  });
+  
+    /**
+     * @swagger
+     * /posts/{id}:
+     *  delete:
+     *     security:
+     *       - bearerAuth: []
+     *     tags:
+     *       - Posts
+     *     operationId: deletePost
+     *     summary: Delete a post by ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         description: ID of the post
+     *         schema:
+     *           type: integer
+     *     responses:
+     *      204:
+     *        description: No content
+     *      400:
+     *        description: Invalid ID
+     *      404:
+     *        description: No post found with that ID
+     */
 
     public deletePost = catchAsync(async (req : AppRequest, res, next) => {
         const {user, post, errorMessage} = await this.validateRequestAndGetEntities(req)
@@ -113,9 +289,39 @@ export class PostController {
             return next(new AppError('You are not authorized to delete this post', 403))
         }
 
-        await this.postRepository.remove(post)
-        res.status(204).send()
-    })
+    await this.postRepository.remove(post);
+    res.status(204).send();
+  });
+  
+    /**
+     * @swagger
+     * /posts/{id}/like:
+     *  post:
+     *     security:
+     *       - bearerAuth: []
+     *     tags:
+     *       - Posts
+     *     operationId: likePost
+     *     summary: Like a post by ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         description: ID of the post
+     *         schema:
+     *           type: integer
+     *     responses:
+     *      200:
+     *        description: A post
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Post'
+     *      400:
+     *        description: Invalid ID or You have already liked this post
+     *      404:
+     *        description: No post found with that ID
+     */
 
     public likePost = catchAsync(async (req : AppRequest, res, next) => {
         const {user, post, errorMessage} = await this.validateRequestAndGetEntities(req)
@@ -146,8 +352,38 @@ export class PostController {
         // Remove sensitive fields
         post.deleteSensitiveFields()
 
-        res.status(200).send(post)
-    })
+    res.status(200).send(post);
+  });
+  
+    /**
+     * @swagger
+     * /posts/{id}/like:
+     *  delete:
+     *     security:
+     *       - bearerAuth: []
+     *     tags:
+     *       - Posts
+     *     operationId: unlikePost
+     *     summary: Unlike a post by ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         description: ID of the post
+     *         schema:
+     *           type: integer
+     *     responses:
+     *      200:
+     *        description: A post
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Post'
+     *      400:
+     *        description: Invalid ID or You have not liked this post
+     *      404:
+     *        description: No post found with that ID
+     */
 
     public unlikePost = catchAsync(async (req : AppRequest, res, next) => {
         const {user, post, errorMessage} = await this.validateRequestAndGetEntities(req)
@@ -166,8 +402,48 @@ export class PostController {
         // Remove sensitive fields
         post.deleteSensitiveFields()
 
-        res.status(200).send(post)
-    })
+    res.status(200).send(post);
+  });
+  
+    /**
+     * @swagger
+     * /posts/{id}/comment:
+     *  post:
+     *     security:
+     *       - bearerAuth: []
+     *     tags:
+     *       - Posts
+     *     operationId: commentPost
+     *     summary: Comment on a post by ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         required: true
+     *         description: ID of the post
+     *         schema:
+     *           type: integer
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               content:
+     *                 type: string
+     *                 description: Comment content
+     *     responses:
+     *      201:
+     *        description: A comment
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/Comment'
+     *      400:
+     *        description: Invalid Request
+     *      404:
+     *        description: No post found with that ID
+     */
 
     public commentPost = catchAsync(async (req : AppRequest, res, next) => {
         const {user, post, errorMessage} = await this.validateRequestAndGetEntities(req)

@@ -11,8 +11,28 @@ export class UserController {
     private userRepository = AppDataSource.getRepository(User)
 
     private notificationRepository = AppDataSource.getRepository(Notification)
-    public getAllUsers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        const users = await this.userRepository.find()
+  /**
+   * @swagger
+   * /users:
+   *  get:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Users
+   *    summary: Get all users
+   *    responses:
+   *      200:
+   *        description: A list of all users
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: array
+   *              items:
+   *                $ref: '#/components/schemas/User'
+   */
+  public getAllUsers = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const users = await this.userRepository.find();
 
         // remove sensitive fields
         users.forEach(user => {
@@ -22,11 +42,36 @@ export class UserController {
         res.status(200).send(users)
     })
 
-    public getUser = catchAsync( async (req: Request, res: Response, next: NextFunction) => {
-        const id = req.params.id
-        const parsedId = parseInt(id)
-        // Check if ID is a number
-        if(isNaN(parsedId)) return next(new AppError('Invalid ID', 400))
+  /**
+   * @swagger
+   * /users/{id}:
+   *  get:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Users
+   *    summary: Get a single user
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        description: ID of the user
+   *        schema:
+   *          type: integer
+   *    responses:
+   *      200:
+   *        description: A single user
+   *        content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/UserWithRelations'
+   */
+  public getUser = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      const id = req.params.id;
+      const parsedId = parseInt(id);
+      // Check if ID is a number
+      if (isNaN(parsedId)) return next(new AppError("Invalid ID", 400));
 
         const user = await this.userRepository.findOne({where: {id: parsedId}, relations:{
                 followed: true,
@@ -46,16 +91,34 @@ export class UserController {
         return res.send(user)
     })
 
-    public getMe = catchAsync(async (req: AppRequest, res: Response, next: NextFunction) => {
-        const user = await this.userRepository.findOne({
-            where: {id: req.user.id},
-            relations:{
-                followed: true,
-                followers: true,
-                posts: true,
-                comments: true,
-            }
-        })
+  /**
+   * @swagger
+   * /users/me:
+   *  get:
+   *    tags:
+   *      - Users
+   *    summary: Get the currently logged in user
+   *    security:
+   *      - bearerAuth: []
+   *    responses:
+   *      200:
+   *        description: The currently logged in user
+   *        content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/UserWithRelations'
+   */
+  public getMe = catchAsync(
+    async (req: AppRequest, res: Response, next: NextFunction) => {
+      const user = await this.userRepository.findOne({
+        where: { id: req.user.id },
+        relations: {
+          followed: true,
+          followers: true,
+          posts: true,
+          comments: true,
+        },
+      });
 
         user.followed.forEach(followedUser => followedUser.deleteSensitiveFields())
         user.followers.forEach(follower => follower.deleteSensitiveFields())
@@ -63,11 +126,40 @@ export class UserController {
         return res.status(200).send(user)
     })
 
-    public followUser = catchAsync(async (req: AppRequest, res: Response, next: NextFunction) => {
-        const userToFollowId = req.params.id
-        const parsedId = parseInt(userToFollowId)
-        // Check if ID is a number
-        if(isNaN(parsedId)) return next(new AppError('Invalid ID', 400))
+  /**
+   * @swagger
+   * /users/{id}/follow:
+   *  post:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Users
+   *    summary: Follow a user
+   *    parameters:
+   *      - in: path
+   *        name: id
+   *        required: true
+   *        schema:
+   *          type: integer
+   *          description: The ID of the user to follow
+   *    responses:
+   *      200:
+   *        description: Successfully followed the user
+   *        content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/UserWithRelations'
+   *      400:
+   *        description: Invalid ID
+   *      404:
+   *        description: No user found with that ID
+   */
+  public followUser = catchAsync(
+    async (req: AppRequest, res: Response, next: NextFunction) => {
+      const userToFollowId = req.params.id;
+      const parsedId = parseInt(userToFollowId);
+      // Check if ID is a number
+      if (isNaN(parsedId)) return next(new AppError("Invalid ID", 400));
 
         const user = req.user
         const userToFollow = await this.userRepository.findOne({
@@ -104,11 +196,40 @@ export class UserController {
         })
     })
 
-    public unfollowUser = catchAsync(async (req: AppRequest, res: Response, next: NextFunction) => {
-        const userToUnfollowId = req.params.id
-        const parsedId = parseInt(userToUnfollowId)
-        // Check if ID is a number
-        if(isNaN(parsedId)) return next(new AppError('Invalid ID', 400))
+    /**
+     * @swagger
+     * /users/{id}/follow:
+     *  delete:
+     *    security:
+     *      - bearerAuth: []
+     *    tags:
+     *      - Users
+     *    summary: Unfollow a user
+     *    parameters:
+     *      - in: path
+     *        name: id
+     *        required: true
+     *        schema:
+     *          type: integer
+     *          description: The ID of the user to unfollow
+     *    responses:
+     *      200:
+     *        description: Successfully unfollowed the user
+     *        content:
+     *          application/json:
+     *            schema:
+     *              $ref: '#/components/schemas/UserWithRelations'
+     *      400:
+     *        description: Invalid ID
+     *      404:
+     *        description: No user found with that ID
+     */
+  public unfollowUser = catchAsync(
+    async (req: AppRequest, res: Response, next: NextFunction) => {
+      const userToUnfollowId = req.params.id;
+      const parsedId = parseInt(userToUnfollowId);
+      // Check if ID is a number
+      if (isNaN(parsedId)) return next(new AppError("Invalid ID", 400));
 
         const user = req.user
         const userToUnfollow = await this.userRepository.findOne({

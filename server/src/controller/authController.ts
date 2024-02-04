@@ -38,9 +38,48 @@ export class AuthController {
 
     }
 
-    public handleSignUp = catchAsync(async (req, res, next) => {
-        const {email, password, passwordValidation, firstName, lastName} = req.body
-        // Body Validation
+  /**
+   * @swagger
+   * /auth/signup:
+   *  post:
+   *    tags:
+   *      - Authentication
+   *    summary: Sign up a new user
+   *    requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *          schema:
+   *            type: object
+   *            properties:
+   *              email:
+   *                type: string
+   *                description: The email of the user
+   *              password:
+   *                type: string
+   *                description: The password of the user
+   *              passwordValidation:
+   *                type: string
+   *                description: Password validation field
+   *              firstName:
+   *                type: string
+   *                description: The first name of the user
+   *              lastName:
+   *                type: string
+   *                description: The last name of the user
+   *    responses:
+   *      200:
+   *        description: Successfully signed up the user
+   *        content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/User'
+   *      400:
+   *        description: Invalid input or user already exists
+   */
+  public handleSignUp = catchAsync(async (req, res, next) => {
+    const {email, password, passwordValidation, firstName, lastName} = req.body
+    // Body Validation
 
         if (password != passwordValidation) {
             return next(new AppError('Passwords do not match', 400))
@@ -64,11 +103,53 @@ export class AuthController {
         this.sendToken(await this.userRepository.save(newUser), res)
     })
 
-    public handleLogin = catchAsync(async (req, res, next) => {
-        const {email, password, longExpiration} = req.body
-        if (!email || !password) {
-            return next(new AppError('Please provide email and password', 400))
-        }
+  /**
+   * @swagger
+   * /auth/login:
+   *  post:
+   *    tags:
+   *      - Authentication
+   *    summary: Log in a user
+   *    requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *          schema:
+   *            type: object
+   *            properties:
+   *              email:
+   *                type: string
+   *                description: The email of the user
+   *              password:
+   *                type: string
+   *                description: The password of the user
+   *              longExpiration:
+   *                type: boolean
+   *                description: Whether to keep the user logged in for a long time
+   *    responses:
+   *      200:
+   *        description: Successfully logged in the user
+   *        content:
+   *          application/json:
+   *            schema:
+   *              type: object
+   *              properties:
+   *                status:
+   *                  type: string
+   *                  example: "success"
+   *                token:
+   *                  type: string
+   *                  description: The JWT token for the user
+   *      400:
+   *        description: Missing email or password
+   *      401:
+   *        description: Incorrect email or password
+   */
+  public handleLogin = catchAsync(async (req, res, next) => {
+    const { email, password, longExpiration } = req.body;
+    if (!email || !password) {
+      return next(new AppError("Please provide email and password", 400));
+    }
 
         const user = await this.userRepository.findOne({where: {email}})
         if (!user || !(await user.comparePassword(password))) {
@@ -79,14 +160,35 @@ export class AuthController {
         this.sendToken(user, res, {long: longExpiration})
     })
 
-    public handleLogout = catchAsync(async (req: AppRequest, res, next) => {
-        // Set the jwt cookie to a dummy value and set the expiration to a date in the past
-        res.cookie('jwt', 'loggedout', {
-            expires: new Date(Date.now() - 10000),
-            httpOnly: true
-        })
-        res.status(200).json({status: 'success'})
-    })
+    /**
+     * @swagger
+     * /auth/logout:
+     *  get:
+     *    security:
+     *      - bearerAuth: []
+     *    tags:
+     *      - Authentication
+     *    summary: Log out the user
+     *    responses:
+     *      200:
+     *        description: Successfully logged out the user
+     *        content:
+     *          application/json:
+     *            schema:
+     *              type: object
+     *              properties:
+     *                status:
+     *                  type: string
+     *                  example: "success"
+     */
+  public handleLogout = catchAsync(async (req: AppRequest, res, next) => {
+    // Set the jwt cookie to a dummy value and set the expiration to a date in the past
+    res.cookie("jwt", "loggedout", {
+      expires: new Date(Date.now() - 10000),
+      httpOnly: true,
+    });
+    res.status(200).json({ status: "success" });
+  });
 
     public protect = catchAsync(async (req: AppRequest, res, next) => {
         let token: string | undefined;
