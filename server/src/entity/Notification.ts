@@ -13,7 +13,7 @@ export class Notification {
     @Column()
     timeStamp: Date
 
-    @Column()
+    @Column({default: false})
     seen: boolean
 
     @ManyToOne(type => User, user => user.notifications)

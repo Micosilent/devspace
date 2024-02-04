@@ -1,5 +1,6 @@
 import {Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "./User";
+import {Post} from "./Post";
 
 @Entity()
 export class Comment {
@@ -12,8 +13,11 @@ export class Comment {
     @Column()
     createdAt: Date
 
-    @ManyToOne(() => User, user => user.posts)
+    @ManyToOne(() => User, user => user.comments)
     createdBy: User
+
+    @ManyToOne(() => Post, post => post.comments)
+    post: Post
 
     @ManyToMany(()=> User)
     @JoinTable()

@@ -5,6 +5,7 @@ import {errorHandler} from "./controller/errorController";
 import {AuthRoutes} from "./routes/authRoutes";
 import {UserRoutes} from "./routes/userRoutes";
 import {AuthController} from "./controller/authController";
+import {PostRoutes} from "./routes/postRoutes";
 
 AppDataSource.initialize().then(async () => {
 
@@ -20,6 +21,7 @@ AppDataSource.initialize().then(async () => {
     app.use(authController.protect)
 
     app.use('/users', UserRoutes)
+    app.use('/posts', PostRoutes)
 
     // setup express app here
     app.use(errorHandler)
