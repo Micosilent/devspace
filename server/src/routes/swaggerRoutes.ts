@@ -83,59 +83,59 @@ const swaggerOptions = {
             },
           },
         },
-      },
-      User: {
-        type: "object",
-        properties: {
-          id: {
-            type: "integer",
-            description: "User ID",
-          },
-          firstName: {
-            type: "string",
-            description: "User first name",
-          },
-          lastName: {
-            type: "string",
-            description: "User last name",
+        User: {
+          type: "object",
+          properties: {
+            id: {
+              type: "integer",
+              description: "User ID",
+            },
+            firstName: {
+              type: "string",
+              description: "User first name",
+            },
+            lastName: {
+              type: "string",
+              description: "User last name",
+            },
           },
         },
-      },
-      UserWithRelations: {
-        allOf: [
-          {
-            $ref: "#/components/schemas/User",
-          },
-          {
-            type: "object",
-            properties: {
-              posts: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/Post",
+        UserWithRelations: {
+          allOf: [
+            {
+              $ref: "#/components/schemas/User",
+            },
+            {
+              type: "object",
+              properties: {
+                posts: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/Post",
+                  },
                 },
-              },
-              comments: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/Comment", // Assuming you have a Comment schema
+                comments: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/Comment", // Assuming you have a Comment schema
+                  },
                 },
-              },
-              followed: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/User",
+                followed: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/User",
+                  },
                 },
-              },
-              followers: {
-                type: "array",
-                items: {
-                  $ref: "#/components/schemas/User",
+                followers: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/User",
+                  },
                 },
               },
             },
-          },
-        ],
+          ],
+        },
       },
     },
   },
