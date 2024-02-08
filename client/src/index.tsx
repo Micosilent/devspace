@@ -12,6 +12,11 @@ import Register from "./routes/Auth/register";
 import AuthRoot from "./routes/Auth/authRoot";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
+import PostList from "./routes/postList";
+import Profile from "./routes/profile";
+import Post from "./routes/post";
+import NewPost from "./routes/newPost";
+import Search from "./routes/search";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -28,6 +33,36 @@ const router = createBrowserRouter([
     path: "/",
     element: <Root />,
     errorElement: <ErrorPage />,
+    children: [
+      {
+        path: "feed",
+        element: <PostList type="user" />,
+      },
+      {
+        path: "global",
+        element: <PostList type="all" />,
+      },
+      {
+        path: "me",
+        element: <Profile selfProfile />,
+      },
+      {
+        path: "user/:id",
+        element: <Profile />,
+      },
+      {
+        path: "post/:id",
+        element: <Post />,
+      },
+      {
+        path: "search",
+        element: <Search />,
+      },
+      {
+        path: "newpost",
+        element: <NewPost />,
+      },
+    ],
   },
   {
     path: "/auth",

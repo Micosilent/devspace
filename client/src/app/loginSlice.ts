@@ -5,9 +5,9 @@ import {
   AuthSignupPostRequest,
   AuthenticationApi,
   Configuration,
+  UsersApi,
 } from "../api";
 import { AppThunk } from "./store";
-import { Axios, AxiosError } from "axios";
 
 interface loginState {
   loggedIn: boolean;
@@ -15,6 +15,7 @@ interface loginState {
   error: string | null;
   userInfo: {
     firstName: string;
+    lastName: string;
     jwt: string;
   };
 }
@@ -25,6 +26,7 @@ const initialState: loginState = {
   error: null,
   userInfo: {
     firstName: "",
+    lastName: "",
     jwt: "",
   },
 };
@@ -35,7 +37,9 @@ export const loginSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.loggedIn = true;
-      state.userInfo.jwt = action.payload;
+      state.userInfo.jwt = action.payload.jwt;
+      state.userInfo.firstName = action.payload.firstName;
+      state.userInfo.lastName = action.payload.lastName;
     },
     logoff: (state) => {
       state.loggedIn = false;
@@ -50,7 +54,7 @@ export const loginSlice = createSlice({
   },
 });
 
-const api = new AuthenticationApi(
+const authApi = new AuthenticationApi(
   new Configuration({
     basePath: process.env.REACT_APP_BACKEND_URL,
   })
@@ -59,15 +63,30 @@ const api = new AuthenticationApi(
 export const postLogin =
   (params: AuthLoginPostRequest): AppThunk =>
   async (dispatch) => {
-    let response;
+    let response, userResponse;
     try {
       dispatch(setStatus(Status.loading));
-      response = await api.authLoginPost(params);
+      response = await authApi.authLoginPost(params);
 
-      dispatch(login(response.data.token));
       await addJWT(response.data.token || "");
 
-      dispatch(setError(""));
+      // Get user info
+      const userApi = new UsersApi(
+        new Configuration({
+          basePath: process.env.REACT_APP_BACKEND_URL,
+          accessToken: response.data.token,
+        })
+      );
+
+      userResponse = await userApi.usersMeGet();
+
+      dispatch(
+        login({
+          jwt: response.data.token,
+          firstName: userResponse.data.firstName,
+          lastName: userResponse.data.lastName,
+        })
+      );
       dispatch(setStatus(Status.succeeded));
     } catch (error) {
       dispatch(setStatus(Status.failed));
@@ -83,7 +102,7 @@ export const postSignup =
     console.log(params);
     try {
       dispatch(setStatus(Status.loading));
-      response = await api.authSignupPost(params);
+      response = await authApi.authSignupPost(params);
 
       dispatch(postLogin({ email: params.email, password: params.password }));
     } catch (error) {
@@ -97,7 +116,7 @@ export const postLogout = (): AppThunk => async (dispatch) => {
   localStorage.removeItem("jwt");
   sessionStorage.removeItem("jwt");
   dispatch(logoff());
-  await api.authLogoutGet();
+  await authApi.authLogoutGet();
 };
 
 const addJWT = async (token: string) => {

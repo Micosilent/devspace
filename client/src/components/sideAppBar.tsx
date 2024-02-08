@@ -13,6 +13,7 @@ import FeedIcon from "@mui/icons-material/Feed";
 import GlobalIcon from "@mui/icons-material/Public";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
+import { Link, useNavigate } from "react-router-dom";
 
 export interface SideAppBarProps {
   drawerWidth: number;
@@ -20,6 +21,12 @@ export interface SideAppBarProps {
 
 export default function SideAppBar(props: SideAppBarProps) {
   const { drawerWidth } = props;
+  const navigate = useNavigate();
+
+  const handleClick = (to: string) => () => {
+    navigate(to);
+  };
+
   return (
     <Drawer
       sx={{
@@ -37,7 +44,7 @@ export default function SideAppBar(props: SideAppBarProps) {
 
       <Divider />
       <List>
-        <ListItem key={"myfeed"} disablePadding>
+        <ListItem key={"myfeed"} disablePadding onClick={handleClick("feed")}>
           <ListItemButton>
             <ListItemIcon>
               <FeedIcon />
@@ -46,7 +53,11 @@ export default function SideAppBar(props: SideAppBarProps) {
           </ListItemButton>
         </ListItem>
 
-        <ListItem key={"globalfeed"} disablePadding>
+        <ListItem
+          key={"globalfeed"}
+          disablePadding
+          onClick={handleClick("global")}
+        >
           <ListItemButton>
             <ListItemIcon>
               <GlobalIcon />
@@ -55,7 +66,11 @@ export default function SideAppBar(props: SideAppBarProps) {
           </ListItemButton>
         </ListItem>
 
-        <ListItem key={"newpost"} disablePadding>
+        <ListItem
+          key={"newpost"}
+          disablePadding
+          onClick={handleClick("newpost")}
+        >
           <ListItemButton>
             <ListItemIcon>
               <AddIcon />
@@ -64,7 +79,7 @@ export default function SideAppBar(props: SideAppBarProps) {
           </ListItemButton>
         </ListItem>
 
-        <ListItem key={"search"} disablePadding>
+        <ListItem key={"search"} disablePadding onClick={handleClick("search")}>
           <ListItemButton>
             <ListItemIcon>
               <SearchIcon />
@@ -72,7 +87,6 @@ export default function SideAppBar(props: SideAppBarProps) {
             <ListItemText primary={"Search"} />
           </ListItemButton>
         </ListItem>
-
       </List>
     </Drawer>
   );
