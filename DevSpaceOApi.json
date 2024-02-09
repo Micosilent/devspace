@@ -76,6 +76,27 @@
                     }
                 }
             },
+            "Notification": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "description": "Notification ID"
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Notification message"
+                    },
+                    "timeStamp": {
+                        "type": "string",
+                        "description": "Notification creation date"
+                    },
+                    "seen": {
+                        "type": "boolean",
+                        "description": "Notification seen status"
+                    }
+                }
+            },
             "User": {
                 "type": "object",
                 "properties": {
@@ -123,6 +144,24 @@
                                 "type": "array",
                                 "items": {
                                     "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    }
+                ]
+            },
+            "UserWithRelationsAndNotifications": {
+                "allOf": [
+                    {
+                        "$ref": "#/components/schemas/UserWithRelations"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "notifications": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Notification"
                                 }
                             }
                         }
@@ -745,7 +784,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/UserWithRelations"
+                                    "$ref": "#/components/schemas/UserWithRelationsAndNotifications"
                                 }
                             }
                         }

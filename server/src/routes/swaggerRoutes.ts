@@ -83,6 +83,27 @@ const swaggerOptions = {
             },
           },
         },
+        Notification: {
+          type: "object",
+          properties: {
+            id: {
+              type: "integer",
+              description: "Notification ID",
+            },
+            message: {
+              type: "string",
+              description: "Notification message",
+            },
+            timeStamp: {
+              type: "string",
+              description: "Notification creation date",
+            },
+            seen: {
+              type: "boolean",
+              description: "Notification seen status",
+            },
+          },
+        },
         User: {
           type: "object",
           properties: {
@@ -136,10 +157,25 @@ const swaggerOptions = {
             },
           ],
         },
+        UserWithRelationsAndNotifications: {
+          allOf: [
+            { $ref: "#/components/schemas/UserWithRelations" },
+            {
+              type: "object",
+              properties: {
+                notifications: {
+                  type: "array",
+                  items: {
+                    $ref: "#/components/schemas/Notification",
+                  },
+                },
+              },
+            },
+          ],
+        },
       },
     },
   },
-
   apis: ["**/controller/*.ts"],
 };
 

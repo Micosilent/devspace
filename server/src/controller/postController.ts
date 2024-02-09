@@ -117,8 +117,12 @@ export class PostController {
 
     public getFollowedPosts = catchAsync(async (req : AppRequest, res, _next) => {
         const user = await this.userRepository.findOne({
-            where: {id: req.user.id},
-            relations: {followed: true, posts: true}})
+          where: { id: req.user.id },
+          relations: {
+            followed: true,
+            posts: { likedBy: true, comments: true },
+          },
+        });
 
         const followedPosts = user.followed.map(followedUser => followedUser.posts).flat()
 
