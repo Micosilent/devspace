@@ -28,10 +28,10 @@ export class Post {
 
     public deleteSensitiveFields(){
         this.createdBy.deleteSensitiveFields()
-        if(this.likedBy){
+        if(this.likedBy.length > 0){
             this.likedBy.forEach(user => user.deleteSensitiveFields())
         }
-        if(this.comments){
+        if(this.comments.length > 0){
             this.comments.forEach(comment => comment.createdBy.deleteSensitiveFields())
         }
 

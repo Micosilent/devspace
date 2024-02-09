@@ -38,7 +38,7 @@ export class PostController {
    */
   public getAllPosts = catchAsync(async (_req, res, _next) => {
     const posts = await this.postRepository.find({
-      relations: { createdBy: true },
+      relations: { createdBy: true, likedBy: true, comments: {createdBy: true} },
     });
 
         // Remove sensitive fields
