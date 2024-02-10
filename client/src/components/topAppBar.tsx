@@ -17,7 +17,11 @@ import { useNavigate } from "react-router-dom";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-function TopAppBar() {
+interface TopAppBarProps {
+  height: number;
+}
+
+function TopAppBar(props: TopAppBarProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector(selectUserInfo);
@@ -25,7 +29,6 @@ function TopAppBar() {
     null
   );
 
-  console.log(userInfo);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -41,15 +44,14 @@ function TopAppBar() {
   };
 
   return (
-    <AppBar position="static">
-      <Container maxWidth="xl" sx={{ zIndex: 2500 }}>
+    <AppBar position="absolute" sx={{zIndex:1600, height: `${props.height}px` }}>
         <Toolbar disableGutters>
           <Typography
             variant="h6"
             noWrap
             component="a"
-            href="#app-bar-with-responsive-menu"
             sx={{
+              marginLeft: "1rem",
               mr: 2,
               display: "flex",
               fontFamily: "monospace",
@@ -72,8 +74,8 @@ function TopAppBar() {
             <NotificationBell />
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
+          <Box sx={{ flexGrow: 0, mr:"2rem" }}>
+            <Tooltip title="Open settings" >
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
                   alt={`${userInfo.firstName} ${userInfo.lastName}`}
@@ -109,7 +111,6 @@ function TopAppBar() {
             </Menu>
           </Box>
         </Toolbar>
-      </Container>
     </AppBar>
   );
 }

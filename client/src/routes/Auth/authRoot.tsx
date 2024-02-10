@@ -12,7 +12,7 @@ export default function AuthRoot() {
 
   useEffect(() => {
     if (loggedIn) {
-      return navigate("/");
+      return navigate("/feed");
     }
   });
 

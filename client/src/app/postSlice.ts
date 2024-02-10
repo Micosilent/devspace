@@ -1,15 +1,15 @@
 import { Store, createSlice } from "@reduxjs/toolkit";
 import { Configuration, Post, PostsApi } from "../api";
 import { Status } from "../util/types";
-import { store } from "./store";
+import { AppThunk, store } from "./store";
 
-interface postSlice {
+interface postSliceInterface {
   status: Status;
   followedPosts: Post[];
   globalPosts: Post[];
 }
 
-const initialState: postSlice = {
+const initialState: postSliceInterface = {
   status: Status.idle,
   followedPosts: [],
   globalPosts: [],
@@ -31,7 +31,7 @@ export const postSlice = createSlice({
   },
 });
 
-export const fetchFollowedPosts = () => async (dispatch: any) => {
+export const fetchFollowedPosts = (): AppThunk => async (dispatch: any) => {
   const postApi = createApi(store);
 
   dispatch(setStatus(Status.loading));
@@ -40,7 +40,7 @@ export const fetchFollowedPosts = () => async (dispatch: any) => {
   dispatch(setStatus(Status.idle));
 };
 
-export const fetchGlobalPosts = () => async (dispatch: any) => {
+export const fetchGlobalPosts = (): AppThunk => async (dispatch: any) => {
   const postApi = createApi(store);
 
   dispatch(setStatus(Status.loading));
@@ -48,6 +48,26 @@ export const fetchGlobalPosts = () => async (dispatch: any) => {
   dispatch(setGlobalPosts(response.data));
   dispatch(setStatus(Status.idle));
 };
+
+export const likePost =
+  (postId: number): AppThunk =>
+  async (dispatch: any) => {
+    const postApi = createApi(store);
+
+    dispatch(setStatus(Status.loading));
+    await postApi.likePost(postId);
+    dispatch(setStatus(Status.idle));
+  };
+
+export const unLikePost =
+  (postId: number): AppThunk =>
+  async (dispatch: any) => {
+    const postApi = createApi(store);
+
+    dispatch(setStatus(Status.loading));
+    await postApi.unlikePost(postId);
+    dispatch(setStatus(Status.idle));
+  };
 
 export const { setFollowedPosts, setGlobalPosts, setStatus } =
   postSlice.actions;

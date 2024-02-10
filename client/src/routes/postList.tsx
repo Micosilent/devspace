@@ -7,7 +7,7 @@ import {
 } from "../app/postSlice";
 import { store, useAppDispatch } from "../app/store";
 import { useEffect } from "react";
-import { List, ListItem, ListItemText } from "@mui/material";
+import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { Post } from "../api";
 import PostListItem from "../components/postListItem";
 
@@ -25,17 +25,49 @@ export default function PostList(props: PostListProps) {
     if (props.type === "user") dispatch(fetchFollowedPosts());
   }, []);
 
-  console.log(globalPosts);
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        alignContent: "center",
+        justifyContent: "center",
+        display: "flex",
+      }}
+    >
       {props.type === "all" && (
         <List>
           {globalPosts.map((post: Post) => (
-            <PostListItem post={post} key={post.id} />
+            <PostListItem post={post} postType="all" key={post.id} />
           ))}
         </List>
       )}
-      {props.type === "user" && <List></List>}
-    </>
+      {props.type === "user" && (
+        <List>
+          {followedPosts.map((post: Post) => (
+            <PostListItem post={post} postType="user" key={post.id} />
+          ))}
+          {followedPosts.length === 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Typography
+                variant="h3"
+                sx={{ color: "text.secondary", mb: "2rem" }}
+              >
+                Whops!
+              </Typography>
+              <Typography textAlign="center" sx={{ color: "text.secondary" }}>
+                There is no content here! Try following some users, or check the
+                global feed
+              </Typography>
+            </Box>
+          )}
+        </List>
+      )}
+    </Box>
   );
 }

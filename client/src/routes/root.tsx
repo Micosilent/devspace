@@ -10,6 +10,7 @@ import BottomAppBar from "../components/bottomAppBar";
 import TopAppBar from "../components/topAppBar";
 
 const drawerWidth = 240;
+const topAppBarHeight = 64;
 
 export default function Root() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export default function Root() {
   return (
     <>
       <Box>
-        <TopAppBar />
+        <TopAppBar height={topAppBarHeight} />
       </Box>
       <Box
         sx={{
@@ -51,6 +52,7 @@ export default function Root() {
             flexGrow: 1,
             p: 3,
             width: { sm: `calc(100% - ${width > 600 ? drawerWidth : 0}px)` },
+            marginTop: { xs: `${topAppBarHeight}px`},
           }}
         >
           <Outlet />
