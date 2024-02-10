@@ -1,5 +1,5 @@
 import { Copyright } from "@mui/icons-material";
-import { Grid, Paper, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { Outlet, useNavigate } from "react-router-dom";
 import { StyledDivider } from "../../components/StyledComponents";
 import { useSelector } from "react-redux";

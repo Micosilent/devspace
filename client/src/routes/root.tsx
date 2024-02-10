@@ -1,7 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
-import { postLogout, selectLoggedIn, selectUserInfo } from "../app/loginSlice";
-import { useAppDispatch } from "../app/store";
+import {  selectLoggedIn } from "../app/loginSlice";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import useWindowDimensions from "../app/hooks/useWindowDimensions";
@@ -14,7 +13,6 @@ const topAppBarHeight = 64;
 
 export default function Root() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const loggedIn = useSelector(selectLoggedIn);
   const { width } = useWindowDimensions();
 
@@ -24,9 +22,6 @@ export default function Root() {
     }
   }, [loggedIn, navigate]);
 
-  const handleClick = () => {
-    dispatch(postLogout());
-  };
 
   return (
     <>

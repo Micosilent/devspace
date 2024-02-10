@@ -5,9 +5,9 @@ import {
   selectAllPosts,
   selectFollowedPosts,
 } from "../app/postSlice";
-import { store, useAppDispatch } from "../app/store";
+import {  useAppDispatch } from "../app/store";
 import { useEffect } from "react";
-import { Box, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Box, List, Typography } from "@mui/material";
 import { Post } from "../api";
 import PostListItem from "../components/postListItem";
 

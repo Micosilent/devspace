@@ -5,7 +5,6 @@ import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
-import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
@@ -13,9 +12,6 @@ import NotificationBell from "./notificationBell";
 import {useSelector} from "react-redux";
 import { postLogout, selectUserInfo } from "../app/loginSlice";
 import { useAppDispatch } from "../app/store";
-import { useNavigate } from "react-router-dom";
-
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 interface TopAppBarProps {
   height: number;
@@ -23,7 +19,6 @@ interface TopAppBarProps {
 
 function TopAppBar(props: TopAppBarProps) {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const userInfo = useSelector(selectUserInfo);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
