@@ -115,6 +115,14 @@ const swaggerOptions = {
               type: "string",
               description: "User first name",
             },
+            isPrivate: {
+              type: "boolean",
+              description: "User private status",
+            },
+            profilePictureId: {
+              type: "string",
+              description: "User profile picture ID",
+            },
             lastName: {
               type: "string",
               description: "User last name",

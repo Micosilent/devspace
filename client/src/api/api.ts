@@ -285,6 +285,18 @@ export interface User {
      */
     'firstName'?: string;
     /**
+     * User private status
+     * @type {boolean}
+     * @memberof User
+     */
+    'isPrivate'?: boolean;
+    /**
+     * User profile picture ID
+     * @type {string}
+     * @memberof User
+     */
+    'profilePictureId'?: string;
+    /**
      * User last name
      * @type {string}
      * @memberof User
@@ -309,6 +321,18 @@ export interface UserWithRelations {
      * @memberof UserWithRelations
      */
     'firstName'?: string;
+    /**
+     * User private status
+     * @type {boolean}
+     * @memberof UserWithRelations
+     */
+    'isPrivate'?: boolean;
+    /**
+     * User profile picture ID
+     * @type {string}
+     * @memberof UserWithRelations
+     */
+    'profilePictureId'?: string;
     /**
      * User last name
      * @type {string}
@@ -359,6 +383,18 @@ export interface UserWithRelationsAndNotifications {
      */
     'firstName'?: string;
     /**
+     * User private status
+     * @type {boolean}
+     * @memberof UserWithRelationsAndNotifications
+     */
+    'isPrivate'?: boolean;
+    /**
+     * User profile picture ID
+     * @type {string}
+     * @memberof UserWithRelationsAndNotifications
+     */
+    'profilePictureId'?: string;
+    /**
      * User last name
      * @type {string}
      * @memberof UserWithRelationsAndNotifications
@@ -394,6 +430,25 @@ export interface UserWithRelationsAndNotifications {
      * @memberof UserWithRelationsAndNotifications
      */
     'notifications'?: Array<Notification>;
+}
+/**
+ * 
+ * @export
+ * @interface UsersMePatchRequest
+ */
+export interface UsersMePatchRequest {
+    /**
+     * Whether the user\'s account is private
+     * @type {boolean}
+     * @memberof UsersMePatchRequest
+     */
+    'isPrivate'?: boolean;
+    /**
+     * The ID of the user\'s profile picture
+     * @type {string}
+     * @memberof UsersMePatchRequest
+     */
+    'profilePictureId'?: string;
 }
 
 /**
@@ -1533,6 +1588,46 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @summary Update the currently logged in user
+         * @param {UsersMePatchRequest} usersMePatchRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usersMePatch: async (usersMePatchRequest: UsersMePatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'usersMePatchRequest' is not null or undefined
+            assertParamExists('usersMePatch', 'usersMePatchRequest', usersMePatchRequest)
+            const localVarPath = `/users/me`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(usersMePatchRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -1606,6 +1701,19 @@ export const UsersApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['UsersApi.usersMeGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @summary Update the currently logged in user
+         * @param {UsersMePatchRequest} usersMePatchRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usersMePatch(usersMePatchRequest: UsersMePatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserWithRelationsAndNotifications>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usersMePatch(usersMePatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.usersMePatch']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -1663,6 +1771,16 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          */
         usersMeGet(options?: any): AxiosPromise<UserWithRelationsAndNotifications> {
             return localVarFp.usersMeGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Update the currently logged in user
+         * @param {UsersMePatchRequest} usersMePatchRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usersMePatch(usersMePatchRequest: UsersMePatchRequest, options?: any): AxiosPromise<UserWithRelationsAndNotifications> {
+            return localVarFp.usersMePatch(usersMePatchRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -1730,6 +1848,18 @@ export class UsersApi extends BaseAPI {
      */
     public usersMeGet(options?: RawAxiosRequestConfig) {
         return UsersApiFp(this.configuration).usersMeGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Update the currently logged in user
+     * @param {UsersMePatchRequest} usersMePatchRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public usersMePatch(usersMePatchRequest: UsersMePatchRequest, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersMePatch(usersMePatchRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

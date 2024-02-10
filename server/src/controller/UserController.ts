@@ -38,7 +38,10 @@ export class UserController {
         user.deleteSensitiveFields();
       });
 
-      res.status(200).send(users);
+      // remove the users set to private
+      const publicUsers = users.filter((user) => user.isPrivate === false);
+
+      res.status(200).send(publicUsers);
     }
   );
 
@@ -67,7 +70,7 @@ export class UserController {
    *              $ref: '#/components/schemas/UserWithRelations'
    */
   public getUser = catchAsync(
-    async (req: Request, res: Response, next: NextFunction) => {
+    async (req: AppRequest, res: Response, next: NextFunction) => {
       const id = req.params.id;
       const parsedId = parseInt(id);
       // Check if ID is a number
@@ -91,6 +94,18 @@ export class UserController {
         followedUser.deleteSensitiveFields()
       );
       user.followers.forEach((follower) => follower.deleteSensitiveFields());
+
+      // If the user is private, only return the user
+      // if the requesting user is following
+      const followStatus = user.followers.some(
+        (follower) => follower.id === req.user.id
+      );
+      if (user.isPrivate && !followStatus) {
+        user.followed = [];
+        user.followers = [];
+        user.posts = [];
+        user.comments = [];
+      }
 
       return res.send(user);
     }
@@ -130,6 +145,60 @@ export class UserController {
         followedUser.deleteSensitiveFields()
       );
       user.followers.forEach((follower) => follower.deleteSensitiveFields());
+
+      return res.status(200).send(user);
+    }
+  );
+
+  /**
+   * @swagger
+   * /users/me:
+   *  patch:
+   *    security:
+   *      - bearerAuth: []
+   *    tags:
+   *      - Users
+   *    summary: Update the currently logged in user
+   *    requestBody:
+   *      required: true
+   *      content:
+   *        application/json:
+   *          schema:
+   *            type: object
+   *            properties:
+   *              isPrivate:
+   *                type: boolean
+   *                description: Whether the user's account is private
+   *              profilePictureId:
+   *                type: string
+   *                description: The ID of the user's profile picture
+   *    responses:
+   *      200:
+   *        description: Successfully updated the user
+   *        content:
+   *          application/json:
+   *            schema:
+   *              $ref: '#/components/schemas/UserWithRelationsAndNotifications'
+   *      400:
+   *        description: Invalid request body
+   */
+  public updateMe = catchAsync(
+    async (req: AppRequest, res: Response, next: NextFunction) => {
+      const user = await this.userRepository.findOne({
+        where: { id: req.user.id },
+        relations: {
+          followed: true,
+          followers: true,
+          posts: true,
+          comments: true,
+          notifications: true,
+        },
+      });
+
+      user.isPrivate = req.body.isPrivate || user.isPrivate;
+      user.profilePictureId =
+        req.body.profilePictureId || user.profilePictureId;
+      await this.userRepository.save(user);
 
       return res.status(200).send(user);
     }

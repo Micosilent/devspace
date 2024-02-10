@@ -6,53 +6,57 @@ import {Notification} from "./Notification";
 
 @Entity()
 export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column()
+  firstName: string;
 
-    @Column()
-    firstName: string
+  @Column()
+  lastName: string;
 
-    @Column()
-    lastName: string
+  @Column()
+  email: string;
 
-    @Column()
-    email: string
+  @Column()
+  password: string;
 
-    @Column()
-    password: string
+  @Column({ default: true })
+  isPrivate: boolean;
 
-    @ManyToMany(type => User)
-    @JoinTable()
-    followed: User[]
+  @Column({ default: null })
+  profilePictureId: string;
 
-    @ManyToMany(type => User)
-    @JoinTable()
-    followers: User[]
+  @ManyToMany((type) => User)
+  @JoinTable()
+  followed: User[];
 
-    @OneToMany(type => Post, post=> post.createdBy)
-    posts: Post[]
+  @ManyToMany((type) => User)
+  @JoinTable()
+  followers: User[];
 
-    @OneToMany(type => Comment, comment=> comment.createdBy)
-    comments: Comment[]
+  @OneToMany((type) => Post, (post) => post.createdBy)
+  posts: Post[];
 
-    @OneToMany(type => Notification, notification => notification.belongsTo)
-    notifications: Notification[]
+  @OneToMany((type) => Comment, (comment) => comment.createdBy)
+  comments: Comment[];
 
+  @OneToMany((type) => Notification, (notification) => notification.belongsTo)
+  notifications: Notification[];
 
-    static async hashPassword(password: string){
-        return await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS))
-    }
+  static async hashPassword(password: string) {
+    return await bcrypt.hash(password, parseInt(process.env.SALT_ROUNDS));
+  }
 
-    async comparePassword(password: string){
-        return await bcrypt.compare(password, this.password)
-    }
+  async comparePassword(password: string) {
+    return await bcrypt.compare(password, this.password);
+  }
 
-    public deleteSensitiveFields(){
-        delete this.password
-        delete this.email
-        delete this.notifications
-        delete this.followed
-        delete this.followers
-    }
+  public deleteSensitiveFields() {
+    delete this.password;
+    delete this.email;
+    delete this.notifications;
+    delete this.followed;
+    delete this.followers;
+  }
 }
