@@ -21,7 +21,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: true })
+  @Column({ default: false })
   isPrivate: boolean;
 
   @Column({ default: null })

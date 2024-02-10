@@ -2,11 +2,13 @@ import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import loginReducer from "./loginSlice";
 import postReducer from "./postSlice";
+import usersReducer from "./usersSlice";
 
 export const store = configureStore({
   reducer: {
     login: loginReducer,
     post: postReducer,
+    users: usersReducer,
   },
 });
 
