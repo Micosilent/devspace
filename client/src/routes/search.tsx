@@ -22,9 +22,16 @@ export default function Search() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  // Dispatch the getUsers actions, and set it as the displayUserList
+  // once on the first render
+
   useEffect(() => {
     dispatch(getUsers());
   }, []);
+
+  useEffect(() => {
+    setDisplayUserList(userList);
+  }, [userList]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const searchValue = event.currentTarget.value;
@@ -39,6 +46,7 @@ export default function Search() {
 
   const handleClick: MouseEventHandler = (event) => {
     const userId = event.currentTarget.id;
+    console.log("User Id from the search component: ", userId);
     navigate(`/user/${userId}`);
   };
 

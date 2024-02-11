@@ -28,31 +28,31 @@ export default function PostListItem(props: PostListItemProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector(selectUserInfo);
-  const [liked, setLiked] = useState(false);
-  const [numberOfLikes, setNumberOfLikes] = useState(0);
+  const [liked, setLiked] = useState(
+    props.post.likedBy?.some((user) => user.id === userInfo.id) || false
+  );
+  const [numberOfLikes, setNumberOfLikes] = useState(
+    props.post.likedBy?.length || 0
+  );
 
-  // On component mount, set the number of likes
-  // and whether the user has liked the post
   useEffect(() => {
+    setLiked(
+      props.post.likedBy?.some((user) => user.id === userInfo.id) || false
+    );
     setNumberOfLikes(props.post.likedBy?.length || 0);
-    setLiked(props.post.likedBy?.includes(userInfo) || false);
-  }, []);
+  }, [props.post.likedBy, userInfo.id]);
 
   const handleLike = () => {
     if (!liked) {
-      // Instant feedback to the user
-      setLiked(true);
       setNumberOfLikes(numberOfLikes + 1);
-      // Dispatch the call to the API
       dispatch(likePost(props.post.id as number));
     }
     // If the user has already liked the post, unlike it
     else {
-      setLiked(false);
       setNumberOfLikes(numberOfLikes - 1);
-
       dispatch(unLikePost(props.post.id as number));
     }
+    setLiked((prevState) => !prevState);
   };
 
   const handlePostClick = () => {
@@ -72,7 +72,13 @@ export default function PostListItem(props: PostListItemProps) {
         alignItems: "start",
       }}
     >
-      <Button onClick={handleUserClick} sx={{ textTransform: "none" }}>
+      <Button
+        onClick={handleUserClick}
+        sx={{
+          textTransform: "none",
+          display: `${props.postType === "user" ? "none" : "block"}`,
+        }}
+      >
         <Typography
           gutterBottom
           sx={{ textAlign: "left", width: "100%" }}

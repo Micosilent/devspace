@@ -81,7 +81,7 @@ export class UserController {
         relations: {
           followed: true,
           followers: true,
-          posts: true,
+          posts: { likedBy: true },
           comments: true,
         },
       });
@@ -89,17 +89,36 @@ export class UserController {
       if (!user) return next(new AppError("No user found with that ID", 404));
 
       // remove sensitive fields
-      user.deleteSensitiveFields();
-      user.followed.forEach((followedUser) =>
-        followedUser.deleteSensitiveFields()
-      );
-      user.followers.forEach((follower) => follower.deleteSensitiveFields());
+      user.deletePrivateFields();
+      if (user.posts) {
+        user.posts.forEach((post) => {
+          if (post.likedBy) {
+            post.likedBy.forEach((user) => user.deleteSensitiveFields());
+          }
+          if (post.comments) {
+            post.comments.forEach((comment) =>
+              comment.createdBy.deleteSensitiveFields()
+            );
+          }
+        });
+      }
+      if (user.followed) {
+        user.followed.forEach((followedUser) =>
+          followedUser.deleteSensitiveFields()
+        );
+      }
+      let followStatus = false;
+      if (user.followers) {
+        user.followers.forEach((follower) => follower.deleteSensitiveFields());
+        // Set the followed status of the user
+        followStatus = user.followers.some(
+          (follower) => follower.id === req.user.id
+        );
+      }
 
       // If the user is private, only return the user
       // if the requesting user is following
-      const followStatus = user.followers.some(
-        (follower) => follower.id === req.user.id
-      );
+
       if (user.isPrivate && !followStatus) {
         user.followed = [];
         user.followers = [];
@@ -206,7 +225,7 @@ export class UserController {
 
   /**
    * @swagger
-   * /users/{id}/follow:
+   * /users/follow/{id}:
    *  post:
    *    security:
    *      - bearerAuth: []
@@ -281,7 +300,7 @@ export class UserController {
 
   /**
    * @swagger
-   * /users/{id}/follow:
+   * /users/follow/{id}:
    *  delete:
    *    security:
    *      - bearerAuth: []

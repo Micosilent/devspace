@@ -53,10 +53,16 @@ export class User {
   }
 
   public deleteSensitiveFields() {
-    delete this.password;
-    delete this.email;
-    delete this.notifications;
+    this.deleteExtraFields();
+    this.deletePrivateFields();
+  }
+  public deleteExtraFields() {
     delete this.followed;
     delete this.followers;
+  }
+  public deletePrivateFields(){
+    delete this.email;
+    delete this.password;
+    delete this.notifications;
   }
 }

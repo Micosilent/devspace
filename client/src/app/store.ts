@@ -10,6 +10,7 @@ export const store = configureStore({
     post: postReducer,
     users: usersReducer,
   },
+  devTools: true,
 });
 
 export type AppDispatch = typeof store.dispatch;

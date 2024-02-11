@@ -24,7 +24,7 @@ const root = ReactDOM.createRoot(
 
 const defaultTheme = createTheme({
   palette: {
-    mode: "dark",
+    mode: "light",
   },
 });
 

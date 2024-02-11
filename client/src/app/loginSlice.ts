@@ -17,6 +17,8 @@ interface loginState {
     firstName: string;
     lastName: string;
     jwt: string;
+    id: number;
+    profilePictureId: string;
   };
 }
 
@@ -28,6 +30,8 @@ const initialState: loginState = {
     firstName: "",
     lastName: "",
     jwt: "",
+    id: -1,
+    profilePictureId: "",
   },
 };
 
@@ -37,9 +41,11 @@ export const loginSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.loggedIn = true;
+      state.userInfo.id = action.payload.id;
       state.userInfo.jwt = action.payload.jwt;
       state.userInfo.firstName = action.payload.firstName;
       state.userInfo.lastName = action.payload.lastName;
+      state.userInfo.profilePictureId = action.payload.profilePictureId;
     },
     logoff: (state) => {
       state.loggedIn = false;
@@ -85,6 +91,8 @@ export const postLogin =
           jwt: response.data.token,
           firstName: userResponse.data.firstName,
           lastName: userResponse.data.lastName,
+          id: userResponse.data.id,
+          profilePictureId: userResponse.data.profilePictureId,
         })
       );
       dispatch(setStatus(Status.succeeded));

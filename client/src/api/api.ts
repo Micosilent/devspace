@@ -1408,49 +1408,15 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
     return {
         /**
          * 
-         * @summary Get all users
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usersGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/users`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication bearerAuth required
-            // http bearer authentication required
-            await setBearerAuthToObject(localVarHeaderParameter, configuration)
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
          * @summary Unfollow a user
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersIdFollowDelete: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usersFollowIdDelete: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('usersIdFollowDelete', 'id', id)
-            const localVarPath = `/users/{id}/follow`
+            assertParamExists('usersFollowIdDelete', 'id', id)
+            const localVarPath = `/users/follow/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1485,10 +1451,10 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersIdFollowPost: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        usersFollowIdPost: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('usersIdFollowPost', 'id', id)
-            const localVarPath = `/users/{id}/follow`
+            assertParamExists('usersFollowIdPost', 'id', id)
+            const localVarPath = `/users/follow/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -1498,6 +1464,40 @@ export const UsersApiAxiosParamCreator = function (configuration?: Configuration
             }
 
             const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication bearerAuth required
+            // http bearer authentication required
+            await setBearerAuthToObject(localVarHeaderParameter, configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get all users
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usersGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/users`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -1640,27 +1640,15 @@ export const UsersApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @summary Get all users
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async usersGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<User>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usersGet(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsersApi.usersGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
          * @summary Unfollow a user
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersIdFollowDelete(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserWithRelations>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usersIdFollowDelete(id, options);
+        async usersFollowIdDelete(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserWithRelations>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usersFollowIdDelete(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsersApi.usersIdFollowDelete']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.usersFollowIdDelete']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -1670,10 +1658,22 @@ export const UsersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async usersIdFollowPost(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserWithRelations>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.usersIdFollowPost(id, options);
+        async usersFollowIdPost(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserWithRelations>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usersFollowIdPost(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['UsersApi.usersIdFollowPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.usersFollowIdPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Get all users
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async usersGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<User>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.usersGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['UsersApi.usersGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -1726,22 +1726,13 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
     return {
         /**
          * 
-         * @summary Get all users
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        usersGet(options?: any): AxiosPromise<Array<User>> {
-            return localVarFp.usersGet(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
          * @summary Unfollow a user
          * @param {number} id 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersIdFollowDelete(id: number, options?: any): AxiosPromise<UserWithRelations> {
-            return localVarFp.usersIdFollowDelete(id, options).then((request) => request(axios, basePath));
+        usersFollowIdDelete(id: number, options?: any): AxiosPromise<UserWithRelations> {
+            return localVarFp.usersFollowIdDelete(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1750,8 +1741,17 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        usersIdFollowPost(id: number, options?: any): AxiosPromise<UserWithRelations> {
-            return localVarFp.usersIdFollowPost(id, options).then((request) => request(axios, basePath));
+        usersFollowIdPost(id: number, options?: any): AxiosPromise<UserWithRelations> {
+            return localVarFp.usersFollowIdPost(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get all users
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        usersGet(options?: any): AxiosPromise<Array<User>> {
+            return localVarFp.usersGet(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -1794,25 +1794,14 @@ export const UsersApiFactory = function (configuration?: Configuration, basePath
 export class UsersApi extends BaseAPI {
     /**
      * 
-     * @summary Get all users
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof UsersApi
-     */
-    public usersGet(options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).usersGet(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
      * @summary Unfollow a user
      * @param {number} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    public usersIdFollowDelete(id: number, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).usersIdFollowDelete(id, options).then((request) => request(this.axios, this.basePath));
+    public usersFollowIdDelete(id: number, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersFollowIdDelete(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -1823,8 +1812,19 @@ export class UsersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof UsersApi
      */
-    public usersIdFollowPost(id: number, options?: RawAxiosRequestConfig) {
-        return UsersApiFp(this.configuration).usersIdFollowPost(id, options).then((request) => request(this.axios, this.basePath));
+    public usersFollowIdPost(id: number, options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersFollowIdPost(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get all users
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof UsersApi
+     */
+    public usersGet(options?: RawAxiosRequestConfig) {
+        return UsersApiFp(this.configuration).usersGet(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

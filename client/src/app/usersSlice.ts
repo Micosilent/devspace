@@ -58,7 +58,7 @@ export const getUserWithRelations =
     dispatch(setStatus(Status.loading));
     try {
       const response = await api.usersIdGet(userId);
-      dispatch(setUserWithRelations(response));
+      dispatch(setUserWithRelations(response.data));
       dispatch(setStatus(Status.idle));
     } catch (error) {
       dispatch(setError((error as Error).message));
@@ -73,10 +73,12 @@ export const followUser =
 
     dispatch(setStatus(Status.loading));
     try {
-      await api.usersIdFollowPost(userId);
-      dispatch(getUsers());
+      console.log("Trying to follow: ", userId);
+      await api.usersFollowIdPost(userId);
     } catch (error) {
       dispatch(setError((error as Error).message));
+    } finally {
+      dispatch(getUserWithRelations(userId));
       dispatch(setStatus(Status.idle));
     }
   };
@@ -88,10 +90,12 @@ export const unFollowUser =
 
     dispatch(setStatus(Status.loading));
     try {
-      await api.usersIdFollowDelete(userId);
-      dispatch(getUsers());
+      console.log("Trying to unfollow: ", userId);
+      await api.usersFollowIdDelete(userId);
     } catch (error) {
       dispatch(setError((error as Error).message));
+    } finally {
+      dispatch(getUserWithRelations(userId));
       dispatch(setStatus(Status.idle));
     }
   };
