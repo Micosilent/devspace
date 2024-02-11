@@ -14,7 +14,7 @@ import { Provider } from "react-redux";
 import { store } from "./app/store";
 import PostList from "./routes/postList";
 import Profile from "./routes/profile";
-import Post from "./routes/post";
+import PostView from "./routes/post";
 import NewPost from "./routes/newPost";
 import Search from "./routes/search";
 
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
       },
       {
         path: "post/:id",
-        element: <Post />,
+        element: <PostView />,
       },
       {
         path: "search",
