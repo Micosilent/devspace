@@ -141,20 +141,32 @@ export class PostController {
     const user = await this.userRepository.findOne({
       where: { id: req.user.id },
       relations: {
-        followed: true,
-        posts: { likedBy: true, comments: true },
+        followed: { posts: { likedBy: true, comments: true } },
+        posts: {
+          likedBy: true,
+          comments: true,
+          createdBy: true,
+        },
       },
     });
 
+    // Get all posts from the followed users
     const followedPosts = user.followed
-      .map((followedUser) => followedUser.posts)
+      .map((followedUser) => {
+        followedUser.deleteSensitiveFields();
+        if (followedUser.posts) {
+          return followedUser.posts.map((post) => {
+            if (post.likedBy.length > 0) {
+              post.likedBy.forEach((user) => user.deleteSensitiveFields());
+            }
+            return {
+              ...post,
+              createdBy: followedUser,
+            };
+          });
+        }
+      })
       .flat();
-
-    // Remove sensitive fields
-    followedPosts.forEach((post) => {
-      post.deleteSensitiveFields();
-    });
-
     res.send(followedPosts);
   });
 
