@@ -95,6 +95,17 @@ export const commentAPost =
     dispatch(fetchAPost(postId));
     dispatch(setStatus(Status.idle));
   };
+  
+export const createPost =
+  (title: string, content: string): AppThunk =>
+  async (dispatch: any) => {
+    const postApi = createApi(store);
+
+    dispatch(setStatus(Status.loading));
+    await postApi.createPost({ title, content });
+    dispatch(fetchGlobalPosts());
+    dispatch(setStatus(Status.idle));
+  };
 
 export const { setFollowedPosts, setGlobalPosts, setStatus, setAPost } =
   postSlice.actions;

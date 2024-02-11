@@ -30,7 +30,19 @@ export default function PostList(props: PostListProps) {
   }, []);
 
   useEffect(() => {
-    setPosts(props.type === "all" ? globalPosts : followedPosts);
+    const postsToDisplay = props.type === "all" ? globalPosts : followedPosts;
+    let sortedPosts: Post[] = [];
+
+    if (postsToDisplay.length > 0) {
+      sortedPosts = [...postsToDisplay].sort((a: Post, b: Post) => {
+        return b.createdAt! > a.createdAt!
+          ? 1
+          : b.createdAt! < a.createdAt!
+          ? -1
+          : 0;
+      });
+    }
+    setPosts(sortedPosts);
   }, [followedPosts, globalPosts, props.type]);
 
   return (
