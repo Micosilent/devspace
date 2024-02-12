@@ -1,19 +1,43 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { useAppDispatch } from "../app/store";
-import React from "react";
-import { createPost } from "../app/postSlice";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import {
+  createPost,
+  selectAPost,
+  updatePost,
+} from "../app/postSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function NewPost() {
+  const { id } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [newPostText, setNewPostText] = React.useState("");
   const [newPostTitle, setNewPostTitle] = React.useState("");
+  const aPost = useSelector(selectAPost);
+
+  useEffect(() => {
+    if (id) {
+      setNewPostText(aPost.content);
+      setNewPostTitle(aPost.title);
+    }
+  }, [aPost, id]);
 
   const handleCreatePost = () => {
     if (newPostText === "" || newPostTitle === "") return;
 
     dispatch(createPost(newPostTitle, newPostText));
+    setNewPostText("");
+    setNewPostTitle("");
+    navigate("/global");
+  };
+
+  const handleUpdatePost = () => {
+    if (newPostText === "" || newPostTitle === "") return;
+    if (!id) return;
+
+    dispatch(updatePost(parseInt(id), newPostTitle, newPostText));
     setNewPostText("");
     setNewPostTitle("");
     navigate("/global");
@@ -45,9 +69,25 @@ export default function NewPost() {
         rows={4}
         sx={{ marginBottom: 2 }}
       />
-      <Button variant="contained" fullWidth onClick={handleCreatePost}>
-        Post
-      </Button>
+      {id ? (
+        <Button
+          variant="contained"
+          color="success"
+          fullWidth
+          onClick={handleUpdatePost}
+        >
+          Update
+        </Button>
+      ) : (
+        <Button
+          variant="contained"
+          color="primary"
+          fullWidth
+          onClick={handleCreatePost}
+        >
+          Create
+        </Button>
+      )}
     </Box>
   );
 }
