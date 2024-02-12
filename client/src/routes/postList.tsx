@@ -14,7 +14,8 @@ import PostListItem from "../components/postListItem";
 import { Status } from "../util/types";
 
 interface PostListProps {
-  type: "all" | "user";
+  type: "feed" | "user";
+  feedType?: "global" | "followed";
 }
 
 export default function PostList(props: PostListProps) {
@@ -25,12 +26,20 @@ export default function PostList(props: PostListProps) {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    dispatch(fetchGlobalPosts());
-    dispatch(fetchFollowedPosts());
-  }, []);
+    if (props.feedType === "global") {
+      dispatch(fetchGlobalPosts());
+    } else {
+      dispatch(fetchFollowedPosts());
+    }
+  }, [props.feedType]);
 
   useEffect(() => {
-    const postsToDisplay = props.type === "all" ? globalPosts : followedPosts;
+    let postsToDisplay: Post[];
+    if (props.feedType === "global") {
+      postsToDisplay = globalPosts;
+    } else {
+      postsToDisplay = followedPosts;
+    }
     let sortedPosts: Post[] = [];
 
     if (postsToDisplay.length > 0) {
@@ -43,7 +52,7 @@ export default function PostList(props: PostListProps) {
       });
     }
     setPosts(sortedPosts);
-  }, [followedPosts, globalPosts, props.type]);
+  }, [followedPosts, globalPosts, props.feedType]);
 
   return (
     <Box
@@ -58,17 +67,27 @@ export default function PostList(props: PostListProps) {
         <CircularProgress />
       ) : (
         <>
-          {props.type === "all" && (
+          {props.feedType === "global" && (
             <List>
               {posts.map((post: Post) => (
-                <PostListItem post={post} postType="all" key={post.id} />
+                <PostListItem
+                  post={post}
+                  postType="feed"
+                  feedType="global"
+                  key={post.id}
+                />
               ))}
             </List>
           )}
-          {props.type === "user" && (
+          {props.feedType === "followed" && (
             <List>
               {followedPosts.map((post: Post) => (
-                <PostListItem post={post} postType="user" key={post.id} />
+                <PostListItem
+                  post={post}
+                  postType="feed"
+                  feedType="followed"
+                  key={post.id}
+                />
               ))}
               {followedPosts.length === 0 && (
                 <Box

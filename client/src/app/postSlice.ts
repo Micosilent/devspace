@@ -55,23 +55,41 @@ export const fetchGlobalPosts = (): AppThunk => async (dispatch: any) => {
 };
 
 export const likePost =
-  (postId: number): AppThunk =>
+  (postId: number, postType?: "global" | "followed"): AppThunk =>
   async (dispatch: any) => {
     const postApi = createApi(store);
 
     dispatch(setStatus(Status.loading));
     await postApi.likePost(postId);
     dispatch(setStatus(Status.idle));
+
+    if (postType === "global") {
+      dispatch(fetchGlobalPosts());
+    } else if (postType === "followed") {
+      dispatch(fetchFollowedPosts());
+    } else {
+      dispatch(fetchFollowedPosts());
+      dispatch(fetchGlobalPosts());
+    }
   };
 
 export const unLikePost =
-  (postId: number): AppThunk =>
+  (postId: number, postType?: "global" | "followed"): AppThunk =>
   async (dispatch: any) => {
     const postApi = createApi(store);
 
     dispatch(setStatus(Status.loading));
     await postApi.unlikePost(postId);
     dispatch(setStatus(Status.idle));
+
+    if (postType === "global") {
+      dispatch(fetchGlobalPosts());
+    } else if (postType === "followed") {
+      dispatch(fetchFollowedPosts());
+    } else {
+      dispatch(fetchFollowedPosts());
+      dispatch(fetchGlobalPosts());
+    }
   };
 
 export const fetchAPost =
@@ -95,7 +113,7 @@ export const commentAPost =
     dispatch(fetchAPost(postId));
     dispatch(setStatus(Status.idle));
   };
-  
+
 export const createPost =
   (title: string, content: string): AppThunk =>
   async (dispatch: any) => {
@@ -104,6 +122,28 @@ export const createPost =
     dispatch(setStatus(Status.loading));
     await postApi.createPost({ title, content });
     dispatch(fetchGlobalPosts());
+    dispatch(setStatus(Status.idle));
+  };
+
+export const updatePost =
+  (postId: number, title: string, content: string): AppThunk =>
+  async (dispatch: any) => {
+    const postApi = createApi(store);
+
+    dispatch(setStatus(Status.loading));
+    await postApi.updatePost(postId, { title, content });
+    dispatch(fetchAPost(postId));
+    dispatch(fetchGlobalPosts());
+    dispatch(setStatus(Status.idle));
+  };
+
+export const deletePost =
+  (postId: number): AppThunk =>
+  async (dispatch: any) => {
+    const postApi = createApi(store);
+
+    dispatch(setStatus(Status.loading));
+    await postApi.deletePost(postId);
     dispatch(setStatus(Status.idle));
   };
 

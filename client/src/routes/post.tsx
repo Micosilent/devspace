@@ -1,6 +1,11 @@
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { commentAPost, fetchAPost, selectAPost } from "../app/postSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  commentAPost,
+  deletePost,
+  fetchAPost,
+  selectAPost,
+} from "../app/postSlice";
 import { useAppDispatch } from "../app/store";
 import { useEffect } from "react";
 import React from "react";
@@ -14,13 +19,16 @@ import {
   Typography,
 } from "@mui/material";
 import { AppAvatar } from "../components/appAvatar";
+import { selectUserInfo } from "../app/loginSlice";
 
 export default function PostView() {
   const postId = useParams<{ id: string }>().id;
   const storePost = useSelector(selectAPost);
+  const selfUser = useSelector(selectUserInfo);
   const [postToDisplay, setPostToDisplay] = React.useState<Post | null>(null);
   const [newComentText, setNewCommentText] = React.useState("");
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(fetchAPost(parseInt(postId!, 10)));
@@ -39,6 +47,11 @@ export default function PostView() {
 
   const handleCancelComment = () => {
     setNewCommentText("");
+  };
+
+  const handleDeletePost = () => {
+    dispatch(deletePost(postToDisplay!.id!));
+    navigate("/global");
   };
 
   return (
@@ -77,6 +90,14 @@ export default function PostView() {
         </Paper>
       </Box>
       <Box sx={{ width: "100%" }}>
+        {postToDisplay?.createdBy?.id === selfUser?.id && (
+          <Box>
+            <Button onClick={() => navigate("edit")}>Edit</Button>
+            <Button color="warning" onClick={handleDeletePost}>
+              Delete
+            </Button>
+          </Box>
+        )}
         <TextField
           label="Add a comment..."
           fullWidth

@@ -21,7 +21,8 @@ import { selectUserInfo } from "../app/loginSlice";
 
 interface PostListItemProps {
   post: Post;
-  postType: "all" | "user";
+  postType: "feed" | "user";
+  feedType?: "global" | "followed";
 }
 
 export default function PostListItem(props: PostListItemProps) {
@@ -40,19 +41,19 @@ export default function PostListItem(props: PostListItemProps) {
       props.post.likedBy?.some((user) => user.id === userInfo.id) || false
     );
     setNumberOfLikes(props.post.likedBy?.length || 0);
-  }, [props.post.likedBy, userInfo.id]);
+  }, [props.post, userInfo.id]);
 
   const handleLike = () => {
     if (!liked) {
       setNumberOfLikes(numberOfLikes + 1);
-      dispatch(likePost(props.post.id as number));
+      dispatch(likePost(props.post.id as number, props.feedType));
     }
     // If the user has already liked the post, unlike it
     else {
       setNumberOfLikes(numberOfLikes - 1);
-      dispatch(unLikePost(props.post.id as number));
+      dispatch(unLikePost(props.post.id as number, props.feedType));
     }
-    setLiked((prevState) => !prevState);
+    setLiked(!liked);
   };
 
   const handlePostClick = () => {
