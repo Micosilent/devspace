@@ -144,6 +144,7 @@ export const deletePost =
 
     dispatch(setStatus(Status.loading));
     await postApi.deletePost(postId);
+    dispatch(fetchGlobalPosts());
     dispatch(setStatus(Status.idle));
   };
 
