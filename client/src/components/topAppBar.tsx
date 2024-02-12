@@ -51,7 +51,7 @@ function TopAppBar(props: TopAppBarProps) {
 
   return (
     <AppBar
-      position="absolute"
+      position="fixed"
       sx={{ zIndex: 1600, height: `${props.height}px` }}
     >
       <Toolbar disableGutters>

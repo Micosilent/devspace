@@ -62,7 +62,7 @@ export default function Search() {
       <Paper>
         <List>
           {displayUserList.map((user) => (
-            <>
+            <Box key={user.id}>
               <ListItem key={user.id}>
                 <Button
                   fullWidth
@@ -78,7 +78,7 @@ export default function Search() {
                 </Button>
               </ListItem>
               <Divider sx={{ mb: "0.3rem" }} />
-            </>
+            </Box>
           ))}
         </List>
       </Paper>
