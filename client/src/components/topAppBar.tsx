@@ -12,6 +12,7 @@ import {useSelector} from "react-redux";
 import { postLogout, selectUserInfo } from "../app/loginSlice";
 import { useAppDispatch } from "../app/store";
 import { AppAvatar } from "./appAvatar";
+import { useNavigate } from "react-router-dom";
 
 interface TopAppBarProps {
   height: number;
@@ -19,11 +20,11 @@ interface TopAppBarProps {
 
 function TopAppBar(props: TopAppBarProps) {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const userInfo = useSelector(selectUserInfo);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
-
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -35,6 +36,16 @@ function TopAppBar(props: TopAppBarProps) {
 
   const handleLogout = () => {
     dispatch(postLogout());
+    setAnchorElUser(null);
+  };
+
+  const handleProfileClick = () => {
+    navigate("/me");
+    setAnchorElUser(null);
+  };
+
+  const handleSettingsClick = () => {
+    navigate("/settings");
     setAnchorElUser(null);
   };
 
@@ -94,10 +105,10 @@ function TopAppBar(props: TopAppBarProps) {
             open={Boolean(anchorElUser)}
             onClose={handleCloseUserMenu}
           >
-            <MenuItem key={"profile"} onClick={handleCloseUserMenu}>
+            <MenuItem key={"profile"} onClick={handleProfileClick}>
               <Typography textAlign="center">{"Profile"}</Typography>
             </MenuItem>
-            <MenuItem key={"settings"} onClick={handleCloseUserMenu}>
+            <MenuItem key={"settings"} onClick={handleSettingsClick}>
               <Typography textAlign="center">{"Settings"}</Typography>
             </MenuItem>
             <MenuItem key={"logout"} onClick={handleLogout}>

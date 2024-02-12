@@ -6,7 +6,7 @@ import "@fontsource/roboto";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./routes/root";
 import ErrorPage from "./error-page";
-import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import {  CssBaseline } from "@mui/material";
 import Login from "./routes/Auth/login";
 import Register from "./routes/Auth/register";
 import AuthRoot from "./routes/Auth/authRoot";
@@ -17,16 +17,13 @@ import Profile from "./routes/profile";
 import PostView from "./routes/post";
 import NewPost from "./routes/newPost";
 import Search from "./routes/search";
+import Settings from "./routes/settings";
+import ANotification from "./routes/notification";
+import AppThemeProvider from "./app/AppThemeProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
-
-const defaultTheme = createTheme({
-  palette: {
-    mode: "light",
-  },
-});
 
 const router = createBrowserRouter([
   {
@@ -36,11 +33,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "feed",
-        element: <PostList type="user" />,
+        element: <PostList type="feed" feedType="followed" />,
       },
       {
         path: "global",
-        element: <PostList type="all" />,
+        element: <PostList type="feed" feedType="global" />,
       },
       {
         path: "me",
@@ -55,12 +52,24 @@ const router = createBrowserRouter([
         element: <PostView />,
       },
       {
+        path: "post/:id/edit",
+        element: <NewPost />,
+      },
+      {
         path: "search",
         element: <Search />,
       },
       {
         path: "newpost",
         element: <NewPost />,
+      },
+      {
+        path: "settings",
+        element: <Settings />,
+      },
+      {
+        path: "notifications",
+        element: <ANotification />,
       },
     ],
   },
@@ -84,10 +93,10 @@ const router = createBrowserRouter([
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ThemeProvider theme={defaultTheme}>
+      <AppThemeProvider>
         <CssBaseline />
         <RouterProvider router={router} />
-      </ThemeProvider>
+      </AppThemeProvider>
     </Provider>
   </React.StrictMode>
 );

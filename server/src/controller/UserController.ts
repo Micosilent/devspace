@@ -213,8 +213,9 @@ export class UserController {
           notifications: true,
         },
       });
-
-      user.isPrivate = req.body.isPrivate || user.isPrivate;
+      // Strict check, as we are dealing with a boolean value in this field
+      user.isPrivate =
+        req.body.isPrivate === undefined ? user.isPrivate : req.body.isPrivate;
       user.profilePictureId =
         req.body.profilePictureId || user.profilePictureId;
       await this.userRepository.save(user);

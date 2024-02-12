@@ -13,25 +13,32 @@ interface loginState {
   loggedIn: boolean;
   status: Status;
   error: string | null;
+  darkMode: boolean;
   userInfo: {
     firstName: string;
     lastName: string;
     jwt: string;
     id: number;
     profilePictureId: string;
+    notifications: Notification[];
+    isPrivate: boolean;
   };
 }
+const storageDarkMode = localStorage.getItem("darkMode") === "true";
 
 const initialState: loginState = {
   loggedIn: false,
   status: Status.idle,
+  darkMode: storageDarkMode || false,
   error: null,
   userInfo: {
+    isPrivate: false,
     firstName: "",
     lastName: "",
     jwt: "",
     id: -1,
     profilePictureId: "",
+    notifications: [],
   },
 };
 
@@ -46,6 +53,8 @@ export const loginSlice = createSlice({
       state.userInfo.firstName = action.payload.firstName;
       state.userInfo.lastName = action.payload.lastName;
       state.userInfo.profilePictureId = action.payload.profilePictureId;
+      state.userInfo.notifications = action.payload.notifications;
+      state.userInfo.isPrivate = action.payload.isPrivate;
     },
     logoff: (state) => {
       state.loggedIn = false;
@@ -56,6 +65,12 @@ export const loginSlice = createSlice({
     },
     setError: (state, action) => {
       state.error = action.payload;
+    },
+    setDarkMode: (state, action) => {
+      state.darkMode = action.payload;
+    },
+    setPrivate: (state, action) => {
+      state.userInfo.isPrivate = action.payload;
     },
   },
 });
@@ -93,6 +108,7 @@ export const postLogin =
           lastName: userResponse.data.lastName,
           id: userResponse.data.id,
           profilePictureId: userResponse.data.profilePictureId,
+          notifications: userResponse.data.notifications,
         })
       );
       dispatch(setStatus(Status.succeeded));
@@ -120,6 +136,22 @@ export const postSignup =
     }
   };
 
+export const updateMe =
+  (isPrivate: boolean): AppThunk =>
+  async (dispatch) => {
+    const userApi = new UsersApi(
+      new Configuration({
+        basePath: process.env.REACT_APP_BACKEND_URL,
+        accessToken: localStorage.getItem("jwt") || "",
+      })
+    );
+    console.log("From inside updateME dispatch, param is:", isPrivate);
+
+    await userApi.usersMePatch({ isPrivate });
+    const userResponse = await userApi.usersMeGet();
+    dispatch(setPrivate(userResponse.data.isPrivate));
+  };
+
 export const postLogout = (): AppThunk => async (dispatch) => {
   localStorage.removeItem("jwt");
   sessionStorage.removeItem("jwt");
@@ -131,7 +163,8 @@ const addJWT = async (token: string) => {
   localStorage.setItem("jwt", token);
 };
 
-export const { login, logoff, setStatus, setError } = loginSlice.actions;
+export const { login, logoff, setStatus, setError, setDarkMode, setPrivate } =
+  loginSlice.actions;
 
 export default loginSlice.reducer;
 
@@ -143,3 +176,6 @@ export const selectUserInfo = (state: { login: loginState }) =>
 
 export const selectErrorMessage = (state: { login: loginState }) =>
   state.login.error;
+
+export const selectDarkMode = (state: { login: loginState }) =>
+  state.login.darkMode;

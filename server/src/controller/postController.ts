@@ -51,20 +51,18 @@ export class PostController {
     });
     // Remove private, non followed users
     const filteredPosts = posts.filter((post) => {
-      let followStatus = false; 
-      
-      if(post.createdBy.followers){
+      let followStatus = false;
+
+      // Get if the req user is in the follower list
+      if (post.createdBy.followers) {
         followStatus = post.createdBy.followers.some(
-           (follower) => follower.id === req.user.id
-        );
-      }
-      
-      if (post.createdBy.isPrivate && !followStatus) {
-        return post.createdBy.followers.some(
           (follower) => follower.id === req.user.id
         );
       }
-      return true;
+
+      return !(post.createdBy.isPrivate && !followStatus);
+
+
     });
 
     res.status(200).send(filteredPosts);
