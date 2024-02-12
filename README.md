@@ -32,7 +32,7 @@ What things you need to install the software and how to install them:
 
 1. Clone the repo
     ```sh
-    git clone https://github.com/your_username_/devspace.git
+    git clone https://github.com/micosilent/devspace.git
    ``` 
 2. Set the docker-compose.yml to match your environment, pay special attention at the secrets, and routes set in the environment variables.
 
