@@ -137,7 +137,7 @@ export default function PostView() {
           {postToDisplay?.comments?.map((comment) => (
             <Paper>
               <Box sx={{ margin: "1rem" }}>
-                <Box sx={{ display: "flex", mb: "0.3rem" }}>
+                <Box sx={{ display: "flex", mb: "0.3rem", pt: "0.3rem" }}>
                   <AppAvatar user={comment.createdBy!} small />
                   <Typography variant="subtitle2" sx={{ ml: "0.5rem" }}>
                     {comment.createdBy?.firstName} {comment.createdBy?.lastName}

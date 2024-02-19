@@ -85,6 +85,10 @@ export default function Profile(props: ProfileProps) {
             <Paper
               sx={{
                 width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <Box>
@@ -138,15 +142,25 @@ export default function Profile(props: ProfileProps) {
                 </Box>
               </Box>
             </Paper>
-            <List sx={{ width: "75%" }}>
-              {userToDisplay!.posts?.map((post: Post) => (
-                <PostListItem post={post} postType="user" key={post.id} />
-              )) || (
-                <Typography variant="h3">
-                  This user has no posts yet!
-                </Typography>
-              )}
-            </List>
+            <Box
+              sx={{
+                width: "75%",
+                margin: "auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <List>
+                {userToDisplay!.posts?.map((post: Post) => (
+                  <PostListItem post={post} postType="user" key={post.id} />
+                )) || (
+                  <Typography variant="h3">
+                    This user has no posts yet!
+                  </Typography>
+                )}
+              </List>
+            </Box>
           </>
         )}
       </Box>
